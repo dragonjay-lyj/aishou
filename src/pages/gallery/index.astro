@@ -1,0 +1,85 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ImageGallery from '../../components/ImageGallery';
+import { galleryImages } from '../../data/gallery';
+import { ModeSwitch } from '../../components/common/ModeSwitch';
+import { Button } from "@nextui-org/button";
+import { Card } from "@nextui-org/card";
+
+// 数据预处理
+const images = galleryImages.map(image => ({
+  ...image,
+  createdAt: image.createdAt || new Date().toISOString(),
+}));
+
+// 统计数据
+const stats = {
+  totalImages: images.length,
+  totalArtists: new Set(images.map(img => img.artist)).size,
+};
+---
+
+<Layout 
+  title="Yaoi Gallery" 
+  description="探索由Yaoi艺术家创作的艺术作品，包含由Gemini识别的图片内容。"
+>
+  <main class="min-h-screen">
+    {/* 页面头部 */}
+    <div class="relative overflow-hidden bg-gradient-to-b from-primary/10 to-background pb-16">
+      <div class="absolute inset-0 overflow-hidden opacity-30">
+        <div class="absolute inset-0 bg-grid-pattern animate-grid-movement"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background"></div>
+      </div>
+
+      <div class="container mx-auto px-4 pt-16 pb-8 relative">
+        <div class="text-center space-y-4 mb-12">
+          <h1 class="text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Yaoi Gallery
+          </h1>
+          <p class="text-xl text-default-600 max-w-2xl mx-auto">
+            探索由Yaoi艺术家创作的艺术作品，包含由Gemini识别的图片内容。
+          </p>
+        </div>
+
+    {/* 主要内容 */}
+    <div class="container mx-auto px-4 py-8">
+      <ImageGallery client:load initialImages={images} />
+    </div>
+
+    <ModeSwitch client:load currentMode="gallery" />
+
+    {/* 返回顶部按钮 */}
+    <Button
+      isIconOnly
+      client:load
+      className="fixed bottom-6 right-6 bg-primary/80 backdrop-blur-lg shadow-lg hover:scale-110 transition-transform"
+      onPress={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+    >
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+      </svg>
+    </Button>
+  </main>
+</Layout>
+
+<style>
+  .bg-grid-pattern {
+    background-image: 
+      linear-gradient(to right, var(--nextui-colors-primary-100/10) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--nextui-colors-primary-100/10) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  @keyframes gridMovement {
+    0% {
+      transform: translate(0, 0);
+    }
+    100% {
+      transform: translate(24px, 24px);
+    }
+  }
+
+  .animate-grid-movement {
+    animation: gridMovement 20s linear infinite;
+  }
+</style>

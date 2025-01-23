@@ -1,11 +1,100 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { ArtistGrid } from '../components/ArtistGrid';
+import { ModeSwitch } from '../components/common/ModeSwitch';
+import { Button } from "@nextui-org/button";
+import { Card, CardBody } from "@nextui-org/card";
+import { Image } from "@nextui-org/image";
+import type { Artist } from '../types/artist';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const artistEntries = await getCollection('artists');
+const worksEntries = await getCollection('works');
+
+// 处理数据以匹配 Artist 类型
+const artists: Artist[] = await Promise.all(
+  artistEntries.map(async (entry) => {
+    const artistWorks = worksEntries
+      .filter(work => work.data.artistId === entry.id)
+      .map(work => ({
+        id: work.id,
+        ...work.data,
+      }));
+
+    return {
+      id: entry.id,
+      ...entry.data,
+      works: artistWorks,
+    };
+  })
+);
+
+// 获取特色画师
+const featuredArtists = artists.filter(artist => artist.featured);
+
+// 统计数据
+const stats = {
+  totalArtists: artists.length,
+  totalWorks: artists.reduce((sum, artist) => sum + artist.works.length, 0),
+};
 ---
 
-<Layout>
-	<Welcome />
+<Layout 
+  title="Artist Gallery" 
+  description="探索来自 Fanbox、Patreon 等平台的优秀画师作品"
+>
+  <main class="min-h-screen">
+    {/* 英雄区域 */}
+    <div class="relative bg-gradient-to-b from-primary/10 to-background">
+      <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute inset-0 bg-dot-pattern opacity-30"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background"></div>
+      </div>
+
+      <div class="container mx-auto px-4 py-16 relative">
+        <div class="max-w-4xl mx-auto text-center space-y-6">
+          <h1 class="text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            发现优秀画师
+          </h1>
+          <p class="text-xl text-default-600">
+            探索来自 Fanbox、Patreon 等平台的优秀画师作品，发现独特的艺术视角
+          </p>
+        </div>
+
+    {/* 所有画师 */}
+    <section id="all-artists" class="py-16">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold mb-8">所有画师</h2>
+        <ArtistGrid client:load artists={artists} />
+      </div>
+    </section>
+
+    <ModeSwitch client:load currentMode="artists" />
+
+    {/* 返回顶部按钮 */}
+    <Button
+    client:load
+      isIconOnly
+      className="fixed bottom-6 right-6 bg-primary/80 backdrop-blur-lg shadow-lg hover:scale-110 transition-transform"
+      onPress={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+    >
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+      </svg>
+    </Button>
+  </main>
 </Layout>
+
+<style>
+  .bg-dot-pattern {
+    background-image: radial-gradient(
+      var(--nextui-colors-primary-200/20) 1px,
+      transparent 1px
+    );
+    background-size: 24px 24px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+</style>

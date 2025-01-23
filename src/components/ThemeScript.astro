@@ -1,0 +1,21 @@
+---
+---
+<script is:inline>
+  (function() {
+    function getTheme() {
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+      
+      const hours = new Date().getHours();
+      if (hours >= 19 || hours <= 6) {
+        return 'dark';
+      }
+      
+      return 'light';
+    }
+
+    const theme = getTheme();
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  })();
+</script>

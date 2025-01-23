@@ -1,0 +1,131 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { ArtistProfile } from '../../../../components/ArtistProfile';
+import { WorkDetail } from '../../../../components/WorkDetail';
+import { Breadcrumbs, BreadcrumbItem } from "@nextui-org/breadcrumbs";
+import { Button } from "@nextui-org/button";
+import { Card } from "@nextui-org/card";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const works = await getCollection('works');
+  const artists = await getCollection('artists');
+  
+  const paths = [];
+  
+  for (const artist of artists) {
+    const artistId = artist.id.replace(/\.(mdx|md)$/, '');
+    
+    const artistWorks = works.filter(work => work.data.artistId === artistId);
+
+    const artistData = {
+      id: artistId,
+      ...artist.data,
+      works: artistWorks.map(w => {
+        const workId = w.id.replace(`${artistId}/`, '').replace(/\.(mdx|md)$/, '');
+        return {
+          id: workId,
+          ...w.data,
+        };
+      }),
+    };
+
+    for (const work of artistWorks) {
+      const workId = work.id.replace(`${artistId}/`, '').replace(/\.(mdx|md)$/, '');
+      
+      const { Content } = await work.render();
+
+      paths.push({
+        params: { 
+          artistId,
+          workId
+        },
+        props: { 
+          work: {
+            id: workId,
+            ...work.data,
+          },
+          Content,
+          artist: artistData,
+        },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { work, Content, artist } = Astro.props;
+
+// 错误处理
+if (!artist || !work) {
+  return new Response('Content not found', { status: 404 });
+}
+
+// 构建面包屑数据
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Artists', href: '/artists' },
+  { name: artist.name, href: `/artists/${artist.id}` },
+  { name: work.title, href: '#' },
+];
+---
+
+<Layout 
+  title={`${work.title} - ${artist.name}`}
+  description={work.description || artist.description}
+>
+  <main class="min-h-screen">
+    {/* 面包屑导航 */}
+    <nav class="container mx-auto px-4 py-4">
+      <ol class="flex items-center space-x-2 text-sm">
+        {breadcrumbs.map((item, index) => (
+          <li class="flex items-center">
+            {index > 0 && <span class="mx-2 text-gray-500">/</span>}
+            {item.href === '#' ? (
+              <span class="text-primary">{item.name}</span>
+            ) : (
+              <a href={item.href} class="text-default-600 hover:text-primary">
+                {item.name}
+              </a>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    {/* 作品内容 */}
+    <ArtistProfile client:load artist={artist} />
+    <WorkDetail 
+      client:load 
+      work={work}
+    >
+      <Content />
+    </WorkDetail>
+
+    {/* 返回按钮 */}
+    <div class="container mx-auto px-4 py-8">
+      <a
+        href={`/artists/${artist.id}`}
+        class="inline-flex items-center space-x-2 text-primary hover:text-primary-600"
+      >
+        <svg 
+          class="w-5 h-5" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            stroke-width="2" 
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+        </svg>
+        <span>返回画师页面</span>
+      </a>
+    </div>
+  </main>
+</Layout>

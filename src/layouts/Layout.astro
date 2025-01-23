@@ -1,6 +1,7 @@
 ---
 import { NextUIProvider } from '@nextui-org/react';
 import ThemeScript from '../components/ThemeScript.astro';
+import { WelcomeModal } from '../components/WelcomeModal';
 
 interface Props {
   title: string;
@@ -33,6 +34,7 @@ const { title, description } = Astro.props;
     <NextUIProvider>
       <main class="min-h-screen text-foreground bg-background transition-colors duration-300">
         <slot />
+        <WelcomeModal client:load />
       </main>
     </NextUIProvider>
   </body>

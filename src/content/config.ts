@@ -11,12 +11,6 @@ const galleryCollection = defineCollection({
     alt: z.string(),
     artist: z.string(),
     source: z.string(),
-    content: z.object({
-      character: z.string(),
-      background: z.string(),
-      ass:z.string(),
-      caa:z.string()
-    }),
     createdAt: z.string().optional(),
     likes: z.number().optional(),
     views: z.number().optional(),

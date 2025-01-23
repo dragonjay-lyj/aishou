@@ -14,6 +14,11 @@ import vercel from '@astrojs/vercel';
 // https://astro.build/config
 export default defineConfig({
   integrations: [tailwind(), sitemap(), mdx(), react()],
-  adapter: vercel(),
+  site: 'https://kemono.dragonjay.top',
+  adapter: vercel({
+    webAnalytics: {
+        enabled: true,
+      },
+}),
   output: 'server',
 });

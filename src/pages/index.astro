@@ -4,8 +4,6 @@ import { getCollection } from 'astro:content';
 import { ArtistGrid } from '../components/ArtistGrid';
 import { ModeSwitch } from '../components/common/ModeSwitch';
 import { Button } from "@nextui-org/button";
-import { Card, CardBody } from "@nextui-org/card";
-import { Image } from "@nextui-org/image";
 import type { Artist } from '../types/artist';
 
 const artistEntries = await getCollection('artists');

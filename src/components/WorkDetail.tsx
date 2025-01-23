@@ -6,6 +6,7 @@ import { Divider } from "@nextui-org/divider";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShareDownloadActions } from './ShareDownloadActions';
 import type { WorkContent, WorkImage } from '../types/work';
+import TwikooComment from './TwikooComments';
 
 interface WorkDetailProps {
   work: WorkContent;
@@ -101,29 +102,7 @@ export const WorkDetail: React.FC<WorkDetailProps> = ({ work, children }) => {
             {children}
           </div>
 
-          {/* 统计信息 */}
-          <div className="flex flex-wrap gap-6 justify-center">
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              className="flex items-center gap-2 text-default-500"
-            >
-              <span>{work.views || 0} 次浏览</span>
-            </motion.div>
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              className="flex items-center gap-2 text-default-500"
-            >
-              <span>{work.likes || 0} 次点赞</span>
-            </motion.div>
-            {work.downloadCount !== undefined && (
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                className="flex items-center gap-2 text-default-500"
-              >
-                <span>{work.downloadCount} 次下载</span>
-              </motion.div>
-            )}
-          </div>
+          <TwikooComment envId="https://twikoo.dragonjay.top" path={work.id} />
         </CardBody>
       </Card>
 

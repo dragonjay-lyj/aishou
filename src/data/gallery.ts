@@ -668,4 +668,103 @@ export const galleryImages: GalleryImage[] = [
     source: "Patreon",
     createdAt: "2024-07-29T12:15:21Z"
   },
+  {
+    id: "75",
+    title: "Esgar",
+    src: "https://ik.imagekit.io/dgfwhfvkn/kemono/Takahirosi/94204550/p19_1_ori_10_o07gnCNd_.avif?updatedAt=1737607403401",
+    alt: "featuring Esgar (used with permission)",
+    artist: "takahirosi",
+    source: "Patreon",
+    createdAt: "2023-12-06T18:40:21Z"
+  },
+  {
+    id: "76",
+    title: "LYKAN",
+    src: "https://ik.imagekit.io/dgfwhfvkn/kemono/Takahirosi/111534759/p28_1_ori_6c_4_uihj4tV.avif?updatedAt=1737607743095",
+    alt: "HD image, non watermark, alt version, and PSD will be delivered to your patreon inbox on October 10th as monthly reward.",
+    artist: "takahirosi",
+    source: "Patreon",
+    createdAt: "2024-09-06T10:46:26Z"
+  },
+  {
+    id: "77",
+    title: "MOUNTAIN",
+    src: "https://ik.imagekit.io/dgfwhfvkn/kemono/Takahirosi/100031716/p22_1_ori_8_JggiGcLam.avif?updatedAt=1737608402907",
+    alt: "Featuring Mountain from Arknights",
+    artist: "takahirosi",
+    source: "Patreon",
+    createdAt: "2024-03-09T08:03:16Z"
+  },
+  {
+    id: "78",
+    title: "Tagg x Diesel",
+    src: "https://ik.imagekit.io/dgfwhfvkn/kemono/Takahirosi/87440488/p15_1_ori_5_eXKlfRK2N.avif?updatedAt=1737610982246",
+    alt: "coach and player~",
+    artist: "takahirosi",
+    source: "Patreon",
+    createdAt: "2023-08-09T16:32:01Z"
+  },
+  {
+    id: "79",
+    title: "Kaito",
+    src: "https://ik.imagekit.io/dgfwhfvkn/kemono/Takahirosi/110255816/p27_2_ori_7_b41xA2mLP.avif?updatedAt=1737619979560",
+    alt: "featuring 海渡KAITO",
+    artist: "takahirosi",
+    source: "Patreon",
+    createdAt: "2024-08-17T02:15:49Z"
+  },
+  {
+    id: "80",
+    title: "Zabaniyya",
+    src: "https://ik.imagekit.io/dgfwhfvkn/kemono/Takahirosi/118001592/p31_2_ori_5x2_Jm855CWMd.avif?updatedAt=1737623131086",
+    alt: "featuring Zabaniyya",
+    artist: "takahirosi",
+    source: "Patreon",
+    createdAt: "2024-12-15T06:43:12Z"
+  },
+  {
+    id: "81",
+    title: "Akashi",
+    src: "https://ik.imagekit.io/dgfwhfvkn/kemono/Takahirosi/102740520/p23_3_ori_6_unilQHsvk.avif?updatedAt=1737625087119",
+    alt: "featuring Akashi from Live A Hero",
+    artist: "takahirosi",
+    source: "Patreon",
+    createdAt: "2024-04-21T01:07:39Z"
+  },
+  {
+    id: "82",
+    title: "Umbrafang",
+    src: "https://ik.imagekit.io/dgfwhfvkn/kemono/Takahirosi/114480611/p29_3_ori_6_D_heYpLGb.avif?updatedAt=1737625390640",
+    alt: "doppelganger",
+    artist: "takahirosi",
+    source: "Patreon",
+    createdAt: "2024-10-22T09:44:17Z"
+  },
+  {
+    id: "83",
+    title: "Biker 2",
+    src: "https://ik.imagekit.io/dgfwhfvkn/kemono/Takahirosi/112936916/p28_4_ori_4_klNY-jpL8.avif?updatedAt=1737625700413",
+    alt: "HD image, non watermark, alt version, and PSD will be delivered to your patreon inbox on October 10th as monthly reward.",
+    artist: "takahirosi",
+    source: "Patreon",
+    createdAt: "2024-09-28T11:42:02Z"
+  },
+  {
+    id: "84",
+    title: "Break time 2",
+    src: "https://ik.imagekit.io/dgfwhfvkn/kemono/Takahirosi/101239407/p22_4_ori_10_GDYiLJFQq.avif?updatedAt=1737625993668",
+    alt: "Cyclist",
+    artist: "takahirosi",
+    source: "Patreon",
+    createdAt: "2024-03-28T16:13:35Z"
+  },
+  {
+    id: "85",
+    title: "Crimson",
+    src: "https://ik.imagekit.io/dgfwhfvkn/kemono/Takahirosi/88403889/p15_4_ori_6_1slfPhNUR.avif?updatedAt=1737626434703",
+    alt: "Crimson Abyss",
+    artist: "takahirosi",
+    source: "Patreon",
+    createdAt: "2023-08-29T00:47:01Z"
+  },
 ];

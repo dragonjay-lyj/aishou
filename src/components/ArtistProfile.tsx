@@ -1,7 +1,11 @@
 // src/components/artists/ArtistProfile.tsx
-import React, { type ReactElement } from 'react';
+import React, { type ReactElement, useState } from 'react';
 import { Avatar } from "@nextui-org/avatar";
 import { Link } from "@nextui-org/link";
+import { Button } from "@nextui-org/button";
+import { Tooltip } from "@nextui-org/tooltip";
+import { Card } from "@nextui-org/card";
+import { motion, AnimatePresence } from "framer-motion";
 import type { Artist, Platform } from '../types/artist';
 
 interface ArtistProfileProps {
@@ -9,54 +13,184 @@ interface ArtistProfileProps {
 }
 
 export const ArtistProfile: React.FC<ArtistProfileProps> = ({ artist }) => {
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [showStats, setShowStats] = useState(false);
+
   return (
-    <div className="relative h-[400px]">
+    <motion.div 
+      className="relative min-h-[400px] md:h-[500px] overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       {/* 背景图片 */}
-      <div className="absolute inset-0">
+      <motion.div 
+        className="absolute inset-0"
+        initial={{ scale: 1.1 }}
+        animate={{ scale: isImageLoaded ? 1 : 1.1 }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
         <img
           src={artist.background}
           alt={`${artist.name}'s background`}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
+          onLoad={() => setIsImageLoaded(true)}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
-      </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background backdrop-blur-sm" />
+      </motion.div>
 
       {/* 画师信息 */}
       <div className="container mx-auto px-4 h-full relative">
-        <div className="absolute bottom-8 left-4 right-4">
-          <div className="flex items-end gap-6">
-            <Avatar
-              src={artist.avatar}
-              className="w-32 h-32 ring-4 ring-background"
-              alt={artist.name}
-            />
-            <div className="flex-grow">
-              <h1 className="text-4xl font-bold text-foreground mb-2">
-                {artist.name}
-              </h1>
-              <p className="text-lg text-foreground/80 mb-4">
-                {artist.description}
-              </p>
-            </div>
-            <div className="flex gap-2">
-              {artist.socialLinks.map((link) => (
-                <Link
-                  key={link.platform}
-                  href={link.url}
-                  target="_blank"
-                  className="text-white/80 hover:text-white"
-                  onClick={(e) => e.stopPropagation()}
+        <motion.div 
+          className="absolute bottom-8 left-4 right-4 md:left-8 md:right-8"
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          <Card className="bg-background/60 backdrop-blur-md p-6 shadow-xl">
+            <div className="flex flex-col md:flex-row md:items-end gap-6">
+              {/* 头像 */}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Avatar
+                  src={artist.avatar}
+                  className="w-32 h-32 ring-4 ring-primary/20 shadow-xl"
+                  alt={artist.name}
+                  isBordered
+                  classNames={{
+                    base: "bg-gradient-to-br from-primary to-secondary transition-transform duration-300"
+                  }}
+                />
+              </motion.div>
+
+              {/* 基本信息 */}
+              <div className="flex-grow space-y-4">
+                <motion.h1 
+                  className="text-4xl font-bold text-foreground bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.5 }}
                 >
-                  <PlatformIcon platform={link.platform} />
-                </Link>
-              ))}
+                  {artist.name}
+                </motion.h1>
+                <motion.p 
+                  className="text-lg text-foreground/80 max-w-2xl"
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                >
+                  {artist.description}
+                </motion.p>
+
+                {/* 统计信息 */}
+                <motion.div 
+                  className="flex gap-6 text-sm text-foreground/60"
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.7 }}
+                >
+                  <div>
+                    <span className="font-bold text-primary">
+                      {artist.works?.length || 0}
+                    </span> 作品
+                  </div>
+                  <div>
+                    加入于 {new Date(artist.joinDate).toLocaleDateString()}
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* 社交链接 */}
+              <motion.div 
+                className="flex flex-wrap gap-2"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.8 }}
+              >
+                {artist.socialLinks.map((link, index) => (
+                  <motion.div
+                    key={link.platform}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8 + index * 0.1 }}
+                  >
+                    <Tooltip
+                      content={`${link.platform}: ${link.username}`}
+                      placement="top"
+                      delay={0}
+                      closeDelay={0}
+                    >
+                      <Button
+                        as={Link}
+                        href={link.url}
+                        target="_blank"
+                        className="bg-default-100/50 hover:bg-default-200/50 backdrop-blur-md
+                                 transition-all duration-300 group"
+                        size="lg"
+                        isIconOnly
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="text-default-600 group-hover:text-primary transition-colors">
+                          <PlatformIcon platform={link.platform} />
+                        </div>
+                      </Button>
+                    </Tooltip>
+                  </motion.div>
+                ))}
+              </motion.div>
             </div>
-          </div>
-        </div>
+          </Card>
+        </motion.div>
       </div>
-    </div>
+
+      {/* 快速统计 */}
+      <AnimatePresence>
+        {showStats && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="absolute top-4 right-4 md:right-8"
+          >
+            <Card className="bg-background/60 backdrop-blur-md p-4">
+              <div className="grid grid-cols-2 gap-4 text-center">
+                <div>
+                  <div className="text-2xl font-bold text-primary">
+                    {artist.works?.length || 0}
+                  </div>
+                  <div className="text-sm text-foreground/60">总作品</div>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 快速操作按钮 */}
+      <motion.div
+        className="absolute top-4 left-4 md:left-8 flex gap-2"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1 }}
+      >
+        <Button
+          color="primary"
+          variant="flat"
+          className="backdrop-blur-md"
+          onPress={() => setShowStats(!showStats)}
+        >
+          {showStats ? '隐藏统计' : '显示统计'}
+        </Button>
+      </motion.div>
+    </motion.div>
   );
 };
+
+// PlatformIcon 组件保持不变
 
 // 平台图标组件
 const PlatformIcon: React.FC<{ platform: Platform }> = ({ platform }) => {

@@ -1,0 +1,117 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { ReadingSettingsPanel } from '../../../../components/ReadingSettings';
+import { calculateReadingStats } from '../../../../types/novel';
+import type { ReadingSettings } from '../../../../types/novel';
+
+export async function getStaticPaths() {
+  const works = await getCollection('works');
+  
+  return works.map(work => ({
+    params: { 
+      artistId: work.data.artistId,
+      novelId: work.id.split('/').pop()?.replace(/\.mdx?$/, '')
+    }
+  }));
+}
+
+const { artistId, novelId } = Astro.params;
+
+// 重新获取work对象
+const works = await getCollection('works');
+const work = works.find(work => 
+  work.data.artistId === artistId && 
+  work.id.split('/').pop()?.replace(/\.mdx?$/, '') === novelId
+);
+
+if (!work) {
+  return new Response(null, {
+    status: 404,
+    statusText: 'Not found'
+  });
+}
+
+const stats = calculateReadingStats(work.body);
+const { Content } = await work.render();
+
+const artist = (await getCollection('artists'))
+  .find(a => a.id === work.data.artistId);
+---
+
+<Layout 
+  title={work.data.title}
+  description={work.data.description}
+
+>
+  <main class="container mx-auto px-4 py-8">
+    <article class="max-w-3xl mx-auto">
+      {/* 阅读设置 */}
+      <div class="fixed top-4 right-4 z-50">
+        <ReadingSettingsPanel
+          client:load
+          onChange={(settings: ReadingSettings) => {
+            // 在客户端处理设置变更
+            document.documentElement.style.fontSize = `${settings.fontSize}px`;
+            document.documentElement.classList.toggle('dark', settings.isDarkMode);
+          }}
+        />
+      </div>
+
+      {/* 小说头部信息 */}
+      <header class="mb-8">
+        <h1 class="text-4xl font-bold mb-4">{work.data.title}</h1>
+        <div class="flex items-center gap-4 mb-4">
+          <img
+            src={artist?.data.avatar}
+            alt={artist?.data.name}
+            class="w-12 h-12 rounded-full"
+          />
+          <div>
+            <p class="font-semibold">{artist?.data.name}</p>
+            <p class="text-sm text-default-500">
+              发布于 {new Date(work.data.publishDate).toLocaleDateString()}
+            </p>
+          </div>
+        </div>
+        <div class="flex gap-4 text-sm text-default-500">
+          <span>{stats.wordCount.toLocaleString()} 字</span>
+          <span>预计阅读时间 {stats.readingTime} 分钟</span>
+        </div>
+      </header>
+
+      {/* 小说内容 */}
+      <div 
+        id="novel-content"
+        class="prose prose-lg max-w-none"
+        data-novel-id={work.id}
+      >
+        <Content />
+      </div>
+    </article>
+  </main>
+
+  <script>
+    // 保存阅读进度
+    const content = document.getElementById('novel-content');
+    if (content) {
+      const novelId = content.dataset.novelId;
+      let lastScrollPosition = 0;
+
+      // 每秒保存一次阅读进度
+      setInterval(() => {
+        const currentPosition = window.scrollY;
+        if (currentPosition !== lastScrollPosition) {
+          localStorage.setItem(`readingProgress_${novelId}`, currentPosition.toString());
+          lastScrollPosition = currentPosition;
+        }
+      }, 1000);
+
+      // 恢复上次阅读进度
+      const savedPosition = localStorage.getItem(`readingProgress_${novelId}`);
+      if (savedPosition) {
+        window.scrollTo(0, parseInt(savedPosition));
+      }
+    }
+  </script>
+</Layout>

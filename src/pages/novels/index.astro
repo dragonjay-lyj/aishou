@@ -1,0 +1,80 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { NovelCard } from '../../components/NovelCard';
+import { calculateReadingStats } from '../../types/novel';
+import type { NovelContent } from '../../types/novel';
+
+// 获取所有作品
+const works = await getCollection('works');
+console.log('Total works:', works.length);
+
+// 筛选小说类型的作品
+const novels = works.filter(work => work.data.type === 'novel');
+console.log('Novels found:', novels.length);
+
+const artists = await getCollection('artists');
+
+const novelsWithStats = await Promise.all(
+  novels.map(async work => {
+    const artist = artists.find(a => a.id === work.data.artistId);
+    const stats = calculateReadingStats(work.body || '');
+    
+    // 明确指定为 NovelContent 类型
+    const novel: NovelContent = {
+      id: work.id.split('/').pop()?.replace(/\.mdx?$/, '') || '',
+      title: work.data.title,
+      cover: work.data.thumbnail,
+      description: work.data.description || '',
+      artistId: work.data.artistId,
+      publishDate: work.data.publishDate,
+      status: work.data.status || 'ongoing',
+      isNSFW: work.data.isNSFW || false,
+      type: 'novel' as const, // 使用 as const 确保类型正确
+      platform: work.data.platform,
+      tier: work.data.tier
+    };
+
+    return {
+      novel,
+      artist: {
+        name: artist?.data.name || 'Unknown',
+        avatar: artist?.data.avatar || '/default-avatar.jpg'
+      },
+      stats
+    };
+  })
+);
+---
+
+<Layout 
+  title="小说专区" 
+  description="发现精彩的原创小说"
+>
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold text-center mb-8">小说专区</h1>
+    
+    {novels.length === 0 ? (
+      <div class="text-center text-gray-500">
+        <p>暂无小说内容</p>
+        <pre class="text-left text-sm mt-4 bg-gray-100 p-4 rounded">
+          Debug Info:
+          Total works: {works.length}
+          Works types: {JSON.stringify(works.map(w => w.data.type), null, 2)}
+          First work data: {JSON.stringify(works[0]?.data, null, 2)}
+        </pre>
+      </div>
+    ) : (
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {novelsWithStats.map(({ novel, artist, stats }) => (
+          <NovelCard
+            client:load
+            novel={novel}
+            artist={artist}
+            stats={stats}
+          />
+        ))}
+      </div>
+    )}
+  </main>
+</Layout>

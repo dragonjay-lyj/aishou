@@ -36,11 +36,18 @@ const artistsCollection = defineCollection({
 
 // 作品集合
 const worksCollection = defineCollection({
+  type: 'content',
   schema: z.object({
     artistId: z.string(),
     title: z.string(),
+    type: z.enum(['novel', 'gallery']),
     description: z.string().optional(),
     thumbnail: z.string(),
+    // 为小说类型添加特定字段
+    content: z.string().optional(), // 小说内容
+    status: z.enum(['ongoing', 'completed', 'hiatus']).optional(),
+    chapter: z.number().optional(),
+    // 图集字段
     images: z.array(z.object({
       url: z.string(),
       caption: z.string().optional(),
@@ -51,7 +58,7 @@ const worksCollection = defineCollection({
         medium: z.string().optional(),
         low: z.string().optional(),
       }).optional(),
-    })),
+    })).optional(), // 使其可选，因为小说可能不需要
     platform: z.enum(platforms),
     publishDate: z.string(),
     updateDate: z.string().optional(),

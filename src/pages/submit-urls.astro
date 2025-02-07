@@ -1,0 +1,73 @@
+---
+// src/pages/submit-urls.astro
+import Layout from '../layouts/Layout.astro';
+import { IndexNow } from '../components/IndexNow';
+
+// 你可以从环境变量或配置文件中获取这些值
+const indexNowConfig = {
+  apiKey: import.meta.env.INDEX_NOW_API_KEY || "3c1aa2ae509643f28e61783b6b846ebd",
+  host: import.meta.env.SITE_HOST || "kemono.dragonjay.top",
+  keyLocation: `https://${import.meta.env.SITE_HOST || "kemono.dragonjay.top"}/${import.meta.env.INDEX_NOW_API_KEY || "3c1aa2ae509643f28e61783b6b846ebd"}.txt`
+};
+---
+
+<Layout 
+  title="提交URLs - IndexNow" 
+  description="使用IndexNow快速提交URLs到搜索引擎"
+>
+  <main class="min-h-screen bg-gradient-to-b from-background to-background-100">
+    <div class="container mx-auto px-4 py-8">
+      {/* 页面标题 */}
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold mb-2">
+          IndexNow URL提交
+        </h1>
+        <p class="text-default-600">
+          快速将您的网页提交到搜索引擎索引
+        </p>
+      </div>
+
+      {/* IndexNow组件 */}
+      <IndexNow 
+        client:load
+        apiKey={indexNowConfig.apiKey}
+        host={indexNowConfig.host}
+        keyLocation={indexNowConfig.keyLocation}
+      />
+
+      {/* 额外信息 */}
+      <div class="mt-12 max-w-2xl mx-auto text-center text-default-500">
+        <h2 class="text-xl font-semibold mb-4">关于 IndexNow</h2>
+        <p class="mb-4">
+          IndexNow 是一个简单的 API，允许网站所有者即时通知搜索引擎有关最新内容更改。
+          这使得搜索引擎可以快速发现和抓取新内容，从而提高网站的收录速度。
+        </p>
+        <div class="flex justify-center gap-4">
+          <a
+            href="https://www.indexnow.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-primary hover:underline"
+          >
+            了解更多
+          </a>
+          <a
+            href="https://www.bing.com/webmasters"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-primary hover:underline"
+          >
+            Bing Webmaster Tools
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  /* 可选的页面特定样式 */
+  .container {
+    max-width: 1200px;
+  }
+</style>
